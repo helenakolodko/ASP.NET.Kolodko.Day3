@@ -140,7 +140,13 @@ namespace Task1.Library
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            int result = (int) this[0];
+            for (int i = 1; i <= degree; i++)
+            {
+                result *= 31;
+                result += (int)this[i];
+            }
+            return result;
         }
 
         public static bool operator ==(Polynomial p1, Polynomial p2)
