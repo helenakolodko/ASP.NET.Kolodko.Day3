@@ -8,6 +8,13 @@ namespace Task1.Tests
     public class PolynomialTest
     {
         [TestMethod]
+        public void Construct_PolynomialWithNegativeMinDegree_CreatesValidPolynomial()
+        {
+            Polynomial p = new Polynomial(new double[] {1, 0, 5.6, 5, 0.5, 0, 0, 0 }, -1);
+            Assert.AreEqual(1, p[-1]);
+        }
+
+        [TestMethod]
         public void Add_TwoPolynomials_ReturnsNewPolynomial()
         {
             Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
