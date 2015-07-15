@@ -23,15 +23,8 @@ namespace Task1.Library
         }
 
         public Polynomial(IEnumerable<double> coefficients)
+            : this(coefficients, 0)
         {
-            double[] temp = coefficients.ToArray<double>();
-            degree = temp.Length - 1; 
-            while (temp[degree] == 0)
-            {
-                degree--;
-            }
-            this.coefficients = new double[degree + 1];
-            Array.Copy(temp, this.coefficients, degree + 1);
         }
 
         public Polynomial(IEnumerable<double> coefficients, int minDegree)
@@ -48,7 +41,7 @@ namespace Task1.Library
             {
                 this.minDegree++;
             }
-            this.coefficients = new double[degree + 1 - minDegree];
+            this.coefficients = new double[degree + 1 - this.minDegree];
             Array.Copy(temp, this.minDegree - minDegree, this.coefficients, 0, degree + 1 - this.minDegree);
         }
 
@@ -181,7 +174,7 @@ namespace Task1.Library
             double[] newCoefficients = new double[degree + 1 - minDegree];
             for (int i = minDegree; i <= degree; i++)
             {
-                newCoefficients[i] = operation(coefficients[i]);
+                newCoefficients[i - minDegree] = operation(coefficients[i - minDegree]);
             }
             return new Polynomial(newCoefficients, minDegree);
         }
