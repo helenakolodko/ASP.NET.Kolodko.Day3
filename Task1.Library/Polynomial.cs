@@ -140,11 +140,11 @@ namespace Task1.Library
 
         public override int GetHashCode()
         {
-            int result = (int) this[0];
+            int result = (int)BitConverter.DoubleToInt64Bits(this[0]);
             for (int i = 1; i <= degree; i++)
             {
                 result *= 31;
-                result += (int)this[i];
+                result += (int)BitConverter.DoubleToInt64Bits(this[i]);
             }
             return result;
         }

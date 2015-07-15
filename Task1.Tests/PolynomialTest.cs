@@ -87,7 +87,15 @@ namespace Task1.Tests
         public void GetHashCode_OfPolynomialsObject_ReturnsCorrectValue()
         {
             Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
-            Assert.AreEqual(4960, p.GetHashCode());
+            Assert.AreEqual(1717986534, p.GetHashCode());
+        }
+
+        [TestMethod]
+        public void GetHashCode_OfTwoNonEqualPolynomialsObject_ReturnDiffernValues()
+        {
+            Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
+            Polynomial pp = new Polynomial(new double[] { 0, 5.6, 5.0000001, 0.5, 0, 0, 0 });
+            Assert.AreNotEqual(pp.GetHashCode(), p.GetHashCode());
         }
     }
 }
