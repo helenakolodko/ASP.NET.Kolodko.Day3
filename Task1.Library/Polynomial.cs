@@ -160,7 +160,7 @@ namespace Task1.Library
             double[] newCoefficients = new double[degree + 1];
             for (int i = 0; i <= degree; i++)
             {
-                newCoefficients[i] = operation(newCoefficients[i]);
+                newCoefficients[i] = operation(coefficients[i]);
             }
             return new Polynomial(newCoefficients);
         }
