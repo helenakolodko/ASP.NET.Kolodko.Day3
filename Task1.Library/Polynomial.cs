@@ -78,7 +78,7 @@ namespace Task1.Library
             return NewWithPolynomial(otherPolynomial, (x, y) => x + y);
         }     
 
-        public Polynomial Add(double value)
+        public Polynomial AddAll(double value)
         {
             return NewWithConstant((x) => x + value);
         }
@@ -88,7 +88,7 @@ namespace Task1.Library
             return NewWithPolynomial(otherPolynomial, (x, y) => x - y);
         }
 
-        public Polynomial Subtract(double value)
+        public Polynomial SubtractAll(double value)
         {
             return NewWithConstant((x) => x - value);
         }
