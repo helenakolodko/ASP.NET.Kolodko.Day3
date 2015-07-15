@@ -8,8 +8,8 @@ namespace Task1.Library
     public sealed class Polynomial : IEquatable<Polynomial>, ICloneable
     {
         private readonly double[] coefficients;
-        private int degree;
-        private int minDegree;
+        private readonly int degree;
+        private readonly int minDegree;
         public int Degree { get { return degree; } }
         public double this[int i]
         {
@@ -171,7 +171,7 @@ namespace Task1.Library
             double[] newCoefficients = new double[newDegree + 1 - newMinDegree];
             for (int i = newMinDegree; i <= newDegree; i++)
             {
-                newCoefficients[i] = operation(this[i], otherPolynomial[i]);
+                newCoefficients[i - newMinDegree] = operation(this[i], otherPolynomial[i]);
             }
             return new Polynomial(newCoefficients, newMinDegree);
         }
