@@ -1,48 +1,70 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Task1.Library
 {
-    public sealed class Polynomial: IEquatable<Polynomial>, ICloneable
+    public sealed class Polynomial : IEquatable<Polynomial>, ICloneable
     {
-        //private readonly int[] coefficients;
+        private readonly double[] coefficients;
         private int degree;
-        private readonly IReadOnlyCollection<int> coefficients;
-        public IReadOnlyCollection<int> Coeffitients { get { return coefficients; } }
-
-        public Polynomial(params int[] coefficients)
+        public int Degree { get { return degree; } }
+        public double this[int i]
         {
-            for (int i = 0; i < coefficients.Length; i++)
+            get
             {
-                if (temp[i] != 0)
-                {
-                    degree = i;
-                }
+                if (i > degree)
+                    return 0;
+                else
+                    return coefficients[i];
             }
-            int[] innner;
-            Array.Copy(coefficients, innner, degree + 1);
-            this.coefficients = new IReadOnlyCollection<int>(inner);
+        }
+
+        public Polynomial(IEnumerable<double> coefficients)
+        {
+            double[] temp = coefficients.ToArray<double>();
+            degree = temp.Length - 1;
+            while (temp[degree] == 0)
+            {
+                degree--;
+            }
+            this.coefficients = new double[degree + 1];
+            Array.Copy(temp, this.coefficients, degree + 1);
         }
 
         public Polynomial(Polynomial otherPolynomial)
         {
-            
+            degree = otherPolynomial.degree;
+            coefficients = new double[degree + 1];
+            for (int i = 0; i <= degree; i++)
+            {
+                coefficients[i] = otherPolynomial[i];
+            }
         }
 
         public double GetValue(double variableValue)
         {
-
+            double result = 0;
+            for (int i = 0; i <= degree; i++)
+            {
+                result += coefficients[i] * Math.Pow(variableValue, i);
+            }
+            return result;
         }
 
         public Polynomial Add(Polynomial otherPolynomial)
         {
-
+            int newDegree = Math.Max(degree, otherPolynomial.degree);
+            double[] newCoefficients = new double[newDegree + 1];
+            for (int i = 0; i <= newDegree; i++)
+            {
+                newCoefficients[i] = this[i] + otherPolynomial[i];
+            }
+            return new Polynomial(newCoefficients);
         }
 
-        public Polynomial Add(int value)
+        public Polynomial Add(double value)
         {
 
         }
@@ -52,12 +74,7 @@ namespace Task1.Library
 
         }
 
-        public Polynomial Subtract(int value)
-        {
-
-        }
-
-        public Polynomial Subtract(Polynomial otherPolynomial)
+        public Polynomial Subtract(double value)
         {
 
         }
@@ -66,7 +83,7 @@ namespace Task1.Library
         {
 
         }
-        public Polynomial Multiply(int value)
+        public Polynomial Multiply(double value)
         {
 
         }
@@ -81,6 +98,11 @@ namespace Task1.Library
             throw new NotImplementedException();
         }
 
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
         public override int GetHashCode()
         {
             return base.GetHashCode();
@@ -88,12 +110,12 @@ namespace Task1.Library
 
         public static bool operator ==(Polynomial p1, Polynomial p2)
         {
-
+            return false;
         }
 
         public static bool operator !=(Polynomial p1, Polynomial p2)
         {
-
+            return true;
         }
     }
 }
