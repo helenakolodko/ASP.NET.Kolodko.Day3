@@ -108,7 +108,11 @@ namespace Task1.Library
 
         public bool Equals(Polynomial other)
         {
-            int maxDegree = Math.Max(degree, otherPolynomial.degree);
+            if ((object)other == null)
+            {
+                return false;
+            }
+            int maxDegree = Math.Max(degree, other.degree);
             bool equals = true;
             for (int i = 0; i <= maxDegree; i++)
             {
@@ -117,11 +121,21 @@ namespace Task1.Library
                     equals = false;
                 }
             }
+            return equals;
         }
 
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            if (obj != null)
+            {
+                Polynomial p = obj as Polynomial;
+                if (p != null)
+                {
+                    return Equals(p);
+                }
+            }
+            return false;
+
         }
 
         public override int GetHashCode()
@@ -131,12 +145,20 @@ namespace Task1.Library
 
         public static bool operator ==(Polynomial p1, Polynomial p2)
         {
-            return false;
+            if ((object)p1 == null)
+            {
+                return false;
+            }
+            return p1.Equals(p2);
         }
 
         public static bool operator !=(Polynomial p1, Polynomial p2)
         {
-            return true;
+            if ((object)p1 == null)
+            {
+                return false;
+            }
+            return !p1.Equals(p2);
         }
     }
 }

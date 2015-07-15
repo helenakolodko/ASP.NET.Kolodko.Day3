@@ -15,5 +15,12 @@ namespace Task1.Tests
             p = p.Add(pp);
             Assert.AreNotSame(p, pp);
         }
+
+        [TestMethod]
+        public void Equals_Null_ReturnsFalsel()
+        {
+            Polynomial p = new Polynomial(new double[]{0, 5.6, 5, 0.5, 0, 0, 0});
+	        Assert.IsFalse(p.Equals(null));
+        }
     }
 }
