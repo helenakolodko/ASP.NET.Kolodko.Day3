@@ -66,26 +66,39 @@ namespace Task1.Library
 
         public Polynomial Add(double value)
         {
-
+            double[] newCoefficients = new double[degree + 1];
+            Array.Copy(coefficients, newCoefficients, degree + 1);
+            newCoefficients[0] += value;
+            return new Polynomial(newCoefficients);
         }
 
         public Polynomial Subtract(Polynomial otherPolynomial)
         {
-
+            int newDegree = Math.Max(degree, otherPolynomial.degree);
+            double[] newCoefficients = new double[newDegree + 1];
+            for (int i = 0; i <= newDegree; i++)
+            {
+                newCoefficients[i] = this[i] - otherPolynomial[i];
+            }
+            return new Polynomial(newCoefficients);
         }
 
         public Polynomial Subtract(double value)
         {
-
+            double[] newCoefficients = new double[degree + 1];
+            Array.Copy(coefficients, newCoefficients, degree + 1);
+            newCoefficients[0] -= value;
+            return new Polynomial(newCoefficients);
         }
 
-        public Polynomial Multiply(Polynomial otherPolynomial)
-        {
-
-        }
         public Polynomial Multiply(double value)
         {
-
+            double[] newCoefficients = new double[degree + 1];
+            for (int i = 0; i <= degree; i++)
+            {
+                newCoefficients[i] = coefficients[i] * value;
+            }
+            return new Polynomial(newCoefficients);
         }
 
         public object Clone()
