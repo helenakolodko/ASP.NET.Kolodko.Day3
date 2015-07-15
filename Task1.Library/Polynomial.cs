@@ -103,12 +103,20 @@ namespace Task1.Library
 
         public object Clone()
         {
-            throw new NotImplementedException();
+            return new Polynomial(this);
         }
 
         public bool Equals(Polynomial other)
         {
-            throw new NotImplementedException();
+            int maxDegree = Math.Max(degree, otherPolynomial.degree);
+            bool equals = true;
+            for (int i = 0; i <= maxDegree; i++)
+            {
+                if (this[i] != other[i])
+                {
+                    equals = false;
+                }
+            }
         }
 
         public override bool Equals(object obj)
