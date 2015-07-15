@@ -55,50 +55,27 @@ namespace Task1.Library
 
         public Polynomial Add(Polynomial otherPolynomial)
         {
-            int newDegree = Math.Max(degree, otherPolynomial.degree);
-            double[] newCoefficients = new double[newDegree + 1];
-            for (int i = 0; i <= newDegree; i++)
-            {
-                newCoefficients[i] = this[i] + otherPolynomial[i];
-            }
-            return new Polynomial(newCoefficients);
-        }
+            return NewWithPolynomial(otherPolynomial, (x, y) => x + y);
+        }     
 
         public Polynomial Add(double value)
         {
-            double[] newCoefficients = new double[degree + 1];
-            Array.Copy(coefficients, newCoefficients, degree + 1);
-            newCoefficients[0] += value;
-            return new Polynomial(newCoefficients);
+            return NewWithConstant((x) => x + value);
         }
 
         public Polynomial Subtract(Polynomial otherPolynomial)
         {
-            int newDegree = Math.Max(degree, otherPolynomial.degree);
-            double[] newCoefficients = new double[newDegree + 1];
-            for (int i = 0; i <= newDegree; i++)
-            {
-                newCoefficients[i] = this[i] - otherPolynomial[i];
-            }
-            return new Polynomial(newCoefficients);
+            return NewWithPolynomial(otherPolynomial, (x, y) => x - y);
         }
 
         public Polynomial Subtract(double value)
         {
-            double[] newCoefficients = new double[degree + 1];
-            Array.Copy(coefficients, newCoefficients, degree + 1);
-            newCoefficients[0] -= value;
-            return new Polynomial(newCoefficients);
+            return NewWithConstant((x) => x - value);
         }
 
         public Polynomial Multiply(double value)
         {
-            double[] newCoefficients = new double[degree + 1];
-            for (int i = 0; i <= degree; i++)
-            {
-                newCoefficients[i] = coefficients[i] * value;
-            }
-            return new Polynomial(newCoefficients);
+            return NewWithConstant((x) => x * value);
         }
 
         public object Clone()
@@ -165,6 +142,27 @@ namespace Task1.Library
                 return false;
             }
             return !p1.Equals(p2);
+        }
+
+        private Polynomial NewWithPolynomial(Polynomial otherPolynomial, Func<double, double, double> operation)
+        {
+            int newDegree = Math.Max(degree, otherPolynomial.degree);
+            double[] newCoefficients = new double[newDegree + 1];
+            for (int i = 0; i <= newDegree; i++)
+            {
+                newCoefficients[i] = operation(this[i], otherPolynomial[i]);
+            }
+            return new Polynomial(newCoefficients);
+        }
+
+        private Polynomial NewWithConstant(Func<double, double> operation)
+        {
+            double[] newCoefficients = new double[degree + 1];
+            for (int i = 0; i <= degree; i++)
+            {
+                newCoefficients[i] = operation(newCoefficients[i]);
+            }
+            return new Polynomial(newCoefficients);
         }
     }
 }
