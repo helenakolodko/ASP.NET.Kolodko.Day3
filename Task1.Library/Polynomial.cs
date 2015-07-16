@@ -7,15 +7,17 @@ namespace Task1.Library
 {
     public sealed class Polynomial : IEquatable<Polynomial>, ICloneable
     {
-        private readonly double[] coefficients;
-        private readonly int degree;
-        private readonly int minDegree;
-        public int Degree { get { return degree; } }
+        private double[] coefficients;
+        private int maxDegree;
+        private int minDegree;
+        public int MaxDegree { get { return maxDegree; } set { maxDegree = value; } }
+        public int MinDegree { get { return minDegree; } set { minDegree = value; } }
+
         public double this[int i]
         {
             get
             {
-                if (i > degree || i < minDegree)
+                if (i > maxDegree || i < minDegree)
                     return 0;
                 else 
                     return coefficients[i - minDegree];
@@ -31,44 +33,44 @@ namespace Task1.Library
         {
 
             double[] temp = coefficients.ToArray<double>();
-            degree = temp.Length - 1 + minDegree;
-            while (temp[degree - minDegree] == 0)
+            MaxDegree = temp.Length - 1 + minDegree;
+            while (temp[MaxDegree - minDegree] == 0)
             {
-                degree--;
+                MaxDegree--;
             }
-            this.minDegree = minDegree;
-            while (temp[this.minDegree - minDegree] == 0)
+            this.MinDegree = minDegree;
+            while (temp[MinDegree - minDegree] == 0)
             {
-                this.minDegree++;
+                MinDegree++;
             }
-            this.coefficients = new double[degree + 1 - this.minDegree];
-            Array.Copy(temp, this.minDegree - minDegree, this.coefficients, 0, degree + 1 - this.minDegree);
+            this.coefficients = new double[MaxDegree + 1 - MinDegree];
+            Array.Copy(temp, MinDegree - minDegree, this.coefficients, 0, MaxDegree + 1 - MinDegree);
         }
 
-        public Polynomial(Polynomial otherPolynomial)
+        public Polynomial(Polynomial other)
         {
-            degree = otherPolynomial.degree;
-            minDegree = otherPolynomial.minDegree;
-            coefficients = new double[degree + 1 - minDegree];
-            for (int i = 0; i <= degree - minDegree; i++)
+            maxDegree = other.MaxDegree;
+            minDegree = other.MinDegree;
+            coefficients = new double[MaxDegree + 1 - MinDegree];
+            for (int i = 0; i <= MaxDegree - MinDegree; i++)
             {
-                coefficients[i] = otherPolynomial[i + minDegree];
+                coefficients[i] = other[i + MinDegree];
             }
         }
 
         public double GetValue(double variableValue)
         {
             double result = 0;
-            for (int i = minDegree; i <= degree; i++)
+            for (int i = MinDegree; i <= MaxDegree; i++)
             {
                 result += this[i] * Math.Pow(variableValue, i);
             }
             return result;
         }
 
-        public Polynomial Add(Polynomial otherPolynomial)
+        public Polynomial Add(Polynomial other)
         {
-            return NewWithPolynomial(otherPolynomial, (x, y) => x + y);
+            return NewWithPolynomial(other, (x, y) => x + y);
         }     
 
         public Polynomial AddAll(double value)
@@ -76,9 +78,9 @@ namespace Task1.Library
             return NewWithConstant((x) => x + value);
         }
 
-        public Polynomial Subtract(Polynomial otherPolynomial)
+        public Polynomial Subtract(Polynomial other)
         {
-            return NewWithPolynomial(otherPolynomial, (x, y) => x - y);
+            return NewWithPolynomial(other, (x, y) => x - y);
         }
 
         public Polynomial SubtractAll(double value)
@@ -96,15 +98,20 @@ namespace Task1.Library
             return new Polynomial(this);
         }
 
+        //public Polynomial Clone()
+        //{
+        //    return new Polynomial(this);
+        //}
+
         public bool Equals(Polynomial other)
         {
             if ((object)other == null)
             {
                 return false;
             }
-            int maxDegree = Math.Max(degree, other.degree);
+            int max = Math.Max(MaxDegree, other.MaxDegree);
             bool equals = true;
-            for (int i =  Math.Min(minDegree, other.minDegree); i <= maxDegree; i++)
+            for (int i = Math.Min(MinDegree, other.MinDegree); i <= max; i++)
             {
                 if (this[i] != other[i])
                 {
@@ -130,8 +137,8 @@ namespace Task1.Library
 
         public override int GetHashCode()
         {
-            int result = (int)BitConverter.DoubleToInt64Bits(this[minDegree]);
-            for (int i = minDegree + 1; i <= degree; i++)
+            int result = (int)BitConverter.DoubleToInt64Bits(this[MinDegree]);
+            for (int i = MinDegree + 1; i <= MaxDegree; i++)
             {
                 result *= 31;
                 result += (int)BitConverter.DoubleToInt64Bits(this[i]);
@@ -157,26 +164,26 @@ namespace Task1.Library
             return !p1.Equals(p2);
         }
 
-        private Polynomial NewWithPolynomial(Polynomial otherPolynomial, Func<double, double, double> operation)
+        private Polynomial NewWithPolynomial(Polynomial other, Func<double, double, double> operation)
         {
-            int newDegree = Math.Max(degree, otherPolynomial.degree);
-            int newMinDegree = Math.Min(minDegree, otherPolynomial.minDegree);
-            double[] newCoefficients = new double[newDegree + 1 - newMinDegree];
-            for (int i = newMinDegree; i <= newDegree; i++)
+            int max = Math.Max(MaxDegree, other.MaxDegree);
+            int min = Math.Min(MinDegree, other.MinDegree);
+            double[] newCoefficients = new double[max + 1 - min];
+            for (int i = min; i <= max; i++)
             {
-                newCoefficients[i - newMinDegree] = operation(this[i], otherPolynomial[i]);
+                newCoefficients[i - min] = operation(this[i], other[i]);
             }
-            return new Polynomial(newCoefficients, newMinDegree);
+            return new Polynomial(newCoefficients, min);
         }
 
         private Polynomial NewWithConstant(Func<double, double> operation)
         {
-            double[] newCoefficients = new double[degree + 1 - minDegree];
-            for (int i = minDegree; i <= degree; i++)
+            double[] newCoefficients = new double[maxDegree + 1 - minDegree];
+            for (int i = MinDegree; i <= MaxDegree; i++)
             {
-                newCoefficients[i - minDegree] = operation(coefficients[i - minDegree]);
+                newCoefficients[i - MinDegree] = operation(coefficients[i - MinDegree]);
             }
-            return new Polynomial(newCoefficients, minDegree);
+            return new Polynomial(newCoefficients, MinDegree);
         }
     }
 }
