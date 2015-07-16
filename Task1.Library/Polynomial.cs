@@ -25,31 +25,34 @@ namespace Task1.Library
         }
 
         public Polynomial(IEnumerable<double> coefficients)
-            : this(coefficients, 0)
+            : this(0, coefficients)
         {
         }
 
-        public Polynomial(params int[] coefficients)
-            : this(coefficients, 0)
+        public Polynomial(int minDegree, params double[] coefficients)
         {
-        }
-
-        public Polynomial(IEnumerable<double> coefficients, int minDegree)
-        {
-
-            double[] temp = coefficients.ToArray<double>();
-            MaxDegree = temp.Length - 1 + minDegree;
-            while (temp[MaxDegree - minDegree] == 0)
+            MaxDegree = coefficients.Length - 1 + minDegree;
+            while (coefficients[MaxDegree - minDegree] == 0)
             {
                 MaxDegree--;
             }
             this.MinDegree = minDegree;
-            while (temp[MinDegree - minDegree] == 0)
+            while (coefficients[MinDegree - minDegree] == 0)
             {
                 MinDegree++;
             }
             this.coefficients = new double[MaxDegree + 1 - MinDegree];
-            Array.Copy(temp, MinDegree - minDegree, this.coefficients, 0, MaxDegree + 1 - MinDegree);
+            Array.Copy(coefficients, MinDegree - minDegree, this.coefficients, 0, MaxDegree + 1 - MinDegree);
+        }
+
+        public Polynomial(params double[] coefficients)
+            : this(0, coefficients)
+        {
+        }
+
+        public Polynomial(int minDegree, IEnumerable<double> coefficients)
+            : this(minDegree, coefficients.ToArray<double>())
+        {
         }
 
         public Polynomial(Polynomial other)
@@ -178,7 +181,7 @@ namespace Task1.Library
             {
                 newCoefficients[i - min] = operation(this[i], other[i]);
             }
-            return new Polynomial(newCoefficients, min);
+            return new Polynomial(min, newCoefficients);
         }
 
         private Polynomial NewWithConstant(Func<double, double> operation)
@@ -186,9 +189,9 @@ namespace Task1.Library
             double[] newCoefficients = new double[MaxDegree + 1 - MinDegree];
             for (int i = MinDegree; i <= MaxDegree; i++)
             {
-                newCoefficients[i - MinDegree] = operation(coefficients[i - MinDegree]);
+                newCoefficients[i - MinDegree] = operation(this[i]);
             }
-            return new Polynomial(newCoefficients, MinDegree);
+            return new Polynomial(MinDegree, newCoefficients);
         }
     }
 }
