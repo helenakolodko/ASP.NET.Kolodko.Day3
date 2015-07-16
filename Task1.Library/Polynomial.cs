@@ -29,6 +29,11 @@ namespace Task1.Library
         {
         }
 
+        public Polynomial(params int[] coefficients)
+            : this(coefficients, 0)
+        {
+        }
+
         public Polynomial(IEnumerable<double> coefficients, int minDegree)
         {
 
@@ -93,15 +98,15 @@ namespace Task1.Library
             return NewWithConstant((x) => x * value);
         }
 
-        public object Clone()
+        object ICloneable.Clone()
         {
             return new Polynomial(this);
         }
 
-        //public Polynomial Clone()
-        //{
-        //    return new Polynomial(this);
-        //}
+        public Polynomial Clone()
+        {
+            return new Polynomial(this);
+        }
 
         public bool Equals(Polynomial other)
         {
@@ -178,7 +183,7 @@ namespace Task1.Library
 
         private Polynomial NewWithConstant(Func<double, double> operation)
         {
-            double[] newCoefficients = new double[maxDegree + 1 - minDegree];
+            double[] newCoefficients = new double[MaxDegree + 1 - MinDegree];
             for (int i = MinDegree; i <= MaxDegree; i++)
             {
                 newCoefficients[i - MinDegree] = operation(coefficients[i - MinDegree]);
