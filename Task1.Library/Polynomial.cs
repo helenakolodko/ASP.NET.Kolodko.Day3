@@ -10,8 +10,8 @@ namespace Task1.Library
         private double[] coefficients;
         private int maxDegree;
         private int minDegree;
-        public int MaxDegree { get { return maxDegree; } set { maxDegree = value; } }
-        public int MinDegree { get { return minDegree; } set { minDegree = value; } }
+        public int MaxDegree { get { return maxDegree; } private set { maxDegree = value; } }
+        public int MinDegree { get { return minDegree; } private set { minDegree = value; } }
 
         public double this[int i]
         {
