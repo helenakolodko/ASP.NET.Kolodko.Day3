@@ -30,10 +30,6 @@ namespace Task1.Library
         public Polynomial(params double[] coefficients)
         {
             Degree = coefficients.Length - 1;
-            while (coefficients[Degree] == 0)
-            {
-                Degree--;
-            }
             this.coefficients = new double[Degree + 1];
             Array.Copy(coefficients, this.coefficients, Degree + 1);
         }
@@ -99,9 +95,12 @@ namespace Task1.Library
             {
                 return false;
             }
-            int max = Math.Max(Degree, other.Degree);
+            if (Degree != other.Degree)
+            {
+                return false;
+            }
             bool equals = true;
-            for (int i = 0; i <= max; i++)
+            for (int i = 0; i <= Degree; i++)
             {
                 if (this[i] != other[i])
                 {
@@ -113,16 +112,12 @@ namespace Task1.Library
 
         public override bool Equals(object obj)
         {
-            if (obj != null)
+            Polynomial p = obj as Polynomial;
+            if (p != null)
             {
-                Polynomial p = obj as Polynomial;
-                if (p != null)
-                {
-                    return Equals(p);
-                }
+                return Equals(p);
             }
             return false;
-
         }
 
         public override int GetHashCode()
@@ -134,6 +129,38 @@ namespace Task1.Library
                 result += (int)BitConverter.DoubleToInt64Bits(this[i]);
             }
             return result;
+        }
+
+        public static Polynomial operator +(Polynomial p1, Polynomial p2)
+        {
+            if ((object)p1 == null)
+            {
+                return p2;
+            }
+            return p1.Add(p2);
+        }
+
+        public static Polynomial operator -(Polynomial p1, Polynomial p2)
+        {
+            if ((object)p1 == null)
+            {
+                return p2;
+            }
+            return p1.Subtract(p2);
+        }
+
+        public static Polynomial operator *(Polynomial p1, int c)
+        {
+            if ((object)p1 == null)
+            {
+                return null;
+            }
+            return p1.Multiply(c);
+        }
+
+        public static Polynomial operator +(int c, Polynomial p2)
+        {
+            return p2 * c;
         }
 
         public static bool operator ==(Polynomial p1, Polynomial p2)
