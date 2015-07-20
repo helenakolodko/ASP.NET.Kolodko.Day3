@@ -31,6 +31,10 @@ namespace Task1.Library
         {
             Degree = coefficients.Length - 1;
             this.coefficients = new double[Degree + 1];
+            while (coefficients[Degree] == 0)
+            {
+                Degree--;
+            }
             Array.Copy(coefficients, this.coefficients, Degree + 1);
         }
 
@@ -167,7 +171,7 @@ namespace Task1.Library
         {
             if ((object)p1 == null)
             {
-                return false;
+                return (object)p2 == null;
             }
             return p1.Equals(p2);
         }
@@ -176,13 +180,17 @@ namespace Task1.Library
         {
             if ((object)p1 == null)
             {
-                return false;
+                return (object)p2 != null;
             }
             return !p1.Equals(p2);
         }
 
         private Polynomial NewWithPolynomial(Polynomial other, Func<double, double, double> operation)
         {
+            if (other == null)
+            {
+                return this;
+            }
             int max = Math.Max(Degree, other.Degree);
             double[] newCoefficients = new double[max + 1];
             for (int i = 0; i <= max; i++)

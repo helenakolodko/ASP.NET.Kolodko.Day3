@@ -28,6 +28,14 @@ namespace Task1.Tests
         }
 
         [TestMethod]
+        public void Add_NullToPolynomial_ReturnsThisPolynomial()
+        {
+            Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
+            Polynomial result = p.Add(null);
+            Assert.AreSame(p, result);
+        }
+
+        [TestMethod]
         public void Subtract_TwoPolynomials_ReturnsNewPolynomial()
         {
             Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
