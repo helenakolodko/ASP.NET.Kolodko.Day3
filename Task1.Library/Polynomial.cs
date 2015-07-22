@@ -8,6 +8,8 @@ namespace Task1.Library
     public sealed class Polynomial : IEquatable<Polynomial>, ICloneable
     {
         private double[] coefficients = {};
+        private static double epsilon = .00001;
+        public static double Epsilon { get { return epsilon; } }
         public int Degree { get { return coefficients.Length - 1; } }
 
         public double this[int i]
@@ -31,7 +33,7 @@ namespace Task1.Library
             if (ReferenceEquals(coefficients, null))
                 throw new ArgumentNullException();
             int degree = coefficients.Length - 1;
-            while (coefficients[degree] == 0)
+            while (CompareTwoDoublesWithEpsilon(coefficients[degree], 0, Epsilon) == 0)
             {
                 degree--;
             }
@@ -102,7 +104,7 @@ namespace Task1.Library
             if (Degree != other.Degree)
                 return false;
             for (int i = 0; i <= Degree; i++)
-                if (this[i] != other[i])
+                if (CompareTwoDoublesWithEpsilon(coefficients[i], other.coefficients[i], Epsilon) != 0)
                     return false;
             return true;
         }
@@ -172,6 +174,17 @@ namespace Task1.Library
             if (ReferenceEquals(lhs, null))
                 return true;
             return !lhs.Equals(rhs);
+        }
+
+        private int CompareTwoDoublesWithEpsilon(double d1, double d2, double epsilon)
+        {
+            if (Math.Abs(d1 - d2) <= epsilon)
+                return 0;
+            else if (d1 > d2)
+                return 1;
+            else
+                return -1;
+
         }
 
         private Polynomial NewWithPolynomial(Polynomial other, Func<double, double, double> operation)
