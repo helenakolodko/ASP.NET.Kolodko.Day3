@@ -13,7 +13,7 @@ namespace Task1.Tests
         {
             Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
             Polynomial pp = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 8, 9.11, 5 });
-            Polynomial result = p.Add(pp);
+            Polynomial result = Polynomial.Add(p, pp);
             Assert.AreNotSame(p, result);
             Assert.AreNotSame(pp, result);
         }
@@ -23,15 +23,16 @@ namespace Task1.Tests
         {
             Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
             Polynomial pp = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 8, 9.11, 5 });
-            p = p.Add(pp);
+            p = Polynomial.Add(p, pp);
             Assert.AreEqual(44.31, p.GetValue(1));
         }
 
         [TestMethod]
-        public void Add_NullToPolynomial_ReturnsThisPolynomial()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Add_NullToPolynomial_ThrowsException()
         {
             Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
-            Polynomial result = p.Add(null);
+            Polynomial result = Polynomial.Add(p, null);
             Assert.AreSame(p, result);
         }
 
@@ -40,7 +41,7 @@ namespace Task1.Tests
         {
             Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
             Polynomial pp = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 8, 9.11, 5 });
-            Polynomial result = p.Subtract(pp);
+            Polynomial result = Polynomial.Subtract(p, pp);
             Assert.AreNotSame(p, result);
             Assert.AreNotSame(pp, result);
         }
@@ -50,7 +51,7 @@ namespace Task1.Tests
         {
             Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
             Polynomial pp = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 8, 9.11, 5 });
-            p = p.Subtract(pp);
+            p = Polynomial.Subtract(p, pp);
             Assert.AreEqual(-22.11, p.GetValue(1));
         }
 
@@ -58,7 +59,7 @@ namespace Task1.Tests
         public void Multiply_ByOne_ReturnsNewPolynomial()
         {
             Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
-            Polynomial result = p.Multiply(1);
+            Polynomial result = Polynomial.Multiply(p, 1);
             Assert.AreNotSame(p, result);
         }
 
@@ -66,7 +67,7 @@ namespace Task1.Tests
         public void Multiply_ByOne_ReturnsEqualPolynomial()
         {
             Polynomial p = new Polynomial(new double[] { 0, 5.6, 5, 0.5, 0, 0, 0 });
-            Polynomial result = p.Multiply(1);
+            Polynomial result = Polynomial.Multiply(p, 1);
             Assert.IsTrue(p == result);
         }
 

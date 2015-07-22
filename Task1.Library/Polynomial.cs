@@ -7,16 +7,15 @@ namespace Task1.Library
 {
     public sealed class Polynomial : IEquatable<Polynomial>, ICloneable
     {
-        private double[] coefficients;
-        private int degree;
-        public int Degree { get { return degree; } private set { degree = value; } }
+        private double[] coefficients = {};
+        public int Degree { get { return coefficients.Length - 1; } }
 
         public double this[int i]
         {
             get
             {
-                if (i > degree || i < 0)
-                    return 0;
+                if (i > coefficients.Length - 1 || i < 0)
+                    throw new ArgumentOutOfRangeException();
                 else 
                     return coefficients[i];
             }
@@ -29,20 +28,24 @@ namespace Task1.Library
 
         public Polynomial(params double[] coefficients)
         {
-            Degree = coefficients.Length - 1;
-            this.coefficients = new double[Degree + 1];
-            while (coefficients[Degree] == 0)
+            if (ReferenceEquals(coefficients, null))
+                throw new ArgumentNullException();
+            int degree = coefficients.Length - 1;
+            while (coefficients[degree] == 0)
             {
-                Degree--;
+                degree--;
             }
-            Array.Copy(coefficients, this.coefficients, Degree + 1);
+            this.coefficients = new double[degree + 1];
+            Array.Copy(coefficients, this.coefficients, degree + 1);
         }
 
         public Polynomial(Polynomial other)
         {
-            degree = other.Degree;
-            coefficients = new double[Degree + 1];
-            for (int i = 0; i <= Degree; i++)
+            if (ReferenceEquals(other, null))
+                throw new ArgumentNullException();
+            int degree = other.Degree;
+            coefficients = new double[degree + 1];
+            for (int i = 0; i <= degree; i++)
             {
                 coefficients[i] = other[i];
             }
@@ -58,29 +61,26 @@ namespace Task1.Library
             return result;
         }
 
-        public Polynomial Add(Polynomial other)
+        public static Polynomial Add(Polynomial p1, Polynomial p2)
         {
-            return NewWithPolynomial(other, (x, y) => x + y);
-        }     
-
-        public Polynomial AddAll(double value)
-        {
-            return NewWithConstant((x) => x + value);
+            if (ReferenceEquals(p1, null))
+                throw new ArgumentNullException();
+            return p1.NewWithPolynomial(p2, (x, y) => x + y);
         }
 
-        public Polynomial Subtract(Polynomial other)
+
+        public static Polynomial Subtract(Polynomial p1, Polynomial p2)
         {
-            return NewWithPolynomial(other, (x, y) => x - y);
+            if (ReferenceEquals(p1, null))
+                throw new ArgumentNullException();
+            return p1.NewWithPolynomial(p2, (x, y) => x - y);
         }
 
-        public Polynomial SubtractAll(double value)
+        public static Polynomial Multiply(Polynomial p1, double value)
         {
-            return NewWithConstant((x) => x - value);
-        }
-
-        public Polynomial Multiply(double value)
-        {
-            return NewWithConstant((x) => x * value);
+            if (ReferenceEquals(p1, null))
+                throw new ArgumentNullException();
+            return p1.NewWithConstant((x) => x * value);
         }
 
         object ICloneable.Clone()
@@ -95,32 +95,27 @@ namespace Task1.Library
 
         public bool Equals(Polynomial other)
         {
-            if ((object)other == null)
-            {
+            if (ReferenceEquals(other, null))
                 return false;
-            }
+            if (ReferenceEquals(other, this))
+                return true;
             if (Degree != other.Degree)
-            {
                 return false;
-            }
-            bool equals = true;
             for (int i = 0; i <= Degree; i++)
-            {
                 if (this[i] != other[i])
-                {
-                    equals = false;
-                }
-            }
-            return equals;
+                    return false;
+            return true;
         }
 
         public override bool Equals(object obj)
         {
+            if (ReferenceEquals(obj, null))
+                return false;
+            if (ReferenceEquals(obj, this))
+                return true;
             Polynomial p = obj as Polynomial;
             if (p != null)
-            {
                 return Equals(p);
-            }
             return false;
         }
 
@@ -135,67 +130,59 @@ namespace Task1.Library
             return result;
         }
 
-        public static Polynomial operator +(Polynomial p1, Polynomial p2)
+        public static Polynomial operator +(Polynomial lhs, Polynomial rhs)
         {
-            if ((object)p1 == null)
-            {
-                return p2;
-            }
-            return p1.Add(p2);
+            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+                throw new ArgumentNullException();
+            return Add(lhs, rhs);
         }
 
-        public static Polynomial operator -(Polynomial p1, Polynomial p2)
+        public static Polynomial operator -(Polynomial lhs, Polynomial rhs)
         {
-            if ((object)p1 == null)
-            {
-                return p2;
-            }
-            return p1.Subtract(p2);
+            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+                throw new ArgumentNullException();
+            return Subtract(lhs, rhs);
         }
 
-        public static Polynomial operator *(Polynomial p1, int c)
+        public static Polynomial operator *(Polynomial lhs, int rhs)
         {
-            if ((object)p1 == null)
-            {
-                return null;
-            }
-            return p1.Multiply(c);
+            if (ReferenceEquals(lhs, null))
+                throw new ArgumentNullException();
+            return Multiply(lhs, rhs);
         }
 
-        public static Polynomial operator +(int c, Polynomial p2)
+        public static Polynomial operator +(int lhs, Polynomial rhs)
         {
-            return p2 * c;
+            return rhs * lhs;
         }
 
-        public static bool operator ==(Polynomial p1, Polynomial p2)
+        public static bool operator ==(Polynomial lhs, Polynomial rhs)
         {
-            if ((object)p1 == null)
-            {
-                return (object)p2 == null;
-            }
-            return p1.Equals(p2);
+            if (ReferenceEquals(lhs, rhs))
+                return true;
+            if (ReferenceEquals(lhs, null))
+                return false;
+            return lhs.Equals(rhs);
         }
 
-        public static bool operator !=(Polynomial p1, Polynomial p2)
+        public static bool operator !=(Polynomial lhs, Polynomial rhs)
         {
-            if ((object)p1 == null)
-            {
-                return (object)p2 != null;
-            }
-            return !p1.Equals(p2);
+            if (ReferenceEquals(lhs, rhs))
+                return false;
+            if (ReferenceEquals(lhs, null))
+                return true;
+            return !lhs.Equals(rhs);
         }
 
         private Polynomial NewWithPolynomial(Polynomial other, Func<double, double, double> operation)
         {
-            if (other == null)
-            {
-                return this;
-            }
+            if (ReferenceEquals(other, null))
+                throw new ArgumentNullException();
             int max = Math.Max(Degree, other.Degree);
             double[] newCoefficients = new double[max + 1];
             for (int i = 0; i <= max; i++)
             {
-                newCoefficients[i] = operation(this[i], other[i]);
+                newCoefficients[i] = operation(i > Degree ? 0 : coefficients[i], i > other.Degree ? 0 : other.coefficients[i]);
             }
             return new Polynomial(newCoefficients);
         }
@@ -205,7 +192,7 @@ namespace Task1.Library
             double[] newCoefficients = new double[Degree + 1];
             for (int i = 0; i <= Degree; i++)
             {
-                newCoefficients[i] = operation(this[i]);
+                newCoefficients[i] = operation(coefficients[i]);
             }
             return new Polynomial(newCoefficients);
         }
